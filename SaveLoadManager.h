@@ -4,8 +4,6 @@
 
 #ifndef ASSIGNMENT3_SAVELOADMANAGER_H
 #define ASSIGNMENT3_SAVELOADMANAGER_H
-#include <__fwd/string.h>
-
 
 class SaveLoadManager {
     public:
@@ -15,6 +13,5 @@ class SaveLoadManager {
     int LoadBestResult();
 
 };
-
 
 #endif //ASSIGNMENT3_SAVELOADMANAGER_H

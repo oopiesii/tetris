@@ -1,37 +1,37 @@
 //
 // Created by Polina Stupak on 13.10.2026.
 //
-#include <cstdlib>
 #include "Game.h"
-
 #include <iostream>
 #include <random>
+#include <unistd.h>
 
 #include "Action.h"
 
 void Game::start() {
+    system("stty -icanon -echo min 0 time 10");
     setbestscore();
-    while (gm != GameState::GameOver) {
+    while (gm != GameState::GameOver && gm != GameState::Exit) {
         Tetromino t = generatenewtetromino();
         if (!board.couldBePlaced(t)) {
             gm = GameState::GameOver;
-            if (points>bestscore) {
-                slm.SaveBestResult(points);
-            }
             break;
         }
         bool landed = false;
         while (!landed) {
             drawboard(t);
             Action action = input.getAction();
-            if (action == Action::None) continue;
+            if (action == Action::None) {
+                if (gm == GameState::Pause) continue;
+                action = Action::MoveDown;
+            }
             if (action == Action::Exit) {
                 gm = GameState::Exit;
                 break;
-            };
+            }
             if (action == Action::Menu) {
-                gm = GameState::Menu;
-                if (ShowMenu()) {
+                bool resume = ShowMenu();
+                if (resume) {
                     gm = GameState::Play;
                     continue;
                 }
@@ -41,11 +41,14 @@ void Game::start() {
             landed = proccessaction(action, t);
         }
         if (gm == GameState::Exit) break;
-        int point = board.ClearFullLines();
-        points += 100 * point;
+
+        int cleared = board.ClearFullLines();
+        points += 100 * cleared;
     }
+    system("stty sane");
     finish();
 }
+
 bool Game::proccessaction(Action action, Tetromino& t) {
     Tetromino test = t;
     switch (action) {
@@ -97,14 +100,16 @@ bool Game::proccessaction(Action action, Tetromino& t) {
     }
     return false;
 }
+
 Tetromino Game::generatenewtetromino() {
     static std::mt19937 gen(std::random_device{}());
-    static std::uniform_int_distribution<int> dist(0, 6);
+    static std::uniform_int_distribution<int> dist(0, static_cast<int>(TetrominoType::Count) - 1);
     int random_number = dist(gen);
     TetrominoType type = static_cast<TetrominoType>(random_number);
     std::cout << random_number << '\n';
     return Tetromino(type);
 }
+
 void Game::drawtetromino(Tetromino t) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -117,9 +122,7 @@ void Game::drawtetromino(Tetromino t) {
         std::cout << '\n';
     }
 }
-// void Game::drawtetrominoonboard(Tetromino t) {
-//
-// }
+
 void Game::drawboard(const Tetromino& currenttetromino) {
     std::system("clear");
     std::cout <<"Hello! That is Tetris by Polina Stupak)" << std::endl;
@@ -146,13 +149,14 @@ void Game::drawboard(const Tetromino& currenttetromino) {
                 std::cout <<getcolor(board.table[i][j].color) << "███" << "\033[0m";;
             }
             else {
-                std::cout << ".  ";
+                std::cout << ". .";
             }
         }
 
         std::cout << '\n';
     }
 }
+
 std::string Game::getcolor(Color color) {
     switch (color) {
         case Color::Red:    return "\033[31m";
@@ -166,12 +170,15 @@ std::string Game::getcolor(Color color) {
     }
     return "\033[0m";
 }
+
 void Game::setscore(int score) {
     points += score;
 }
+
 void Game::setbestscore() {
     bestscore = slm.LoadBestResult();
 }
+
 void Game::finish() {
     std::system("clear");
     if (gm == GameState::GameOver) {
@@ -185,18 +192,22 @@ void Game::finish() {
     std::cout << "Your score: " << points << std::endl;
 
 }
+
 bool Game::ShowMenu() {
     std::system("clear");
     std::cout << "BEST SCORE: " << bestscore << std::endl;
     std::cout << "YOUR CURRENT SCORE: " << points << std::endl;
     std::cout << "To end game enter E" << std::endl;
     std::cout << "To continue game enter C" << std::endl;
+    system("stty min 1 time 0");
+    bool result = false;
     char key;
-    while (std::cin >> key) {
+    while (read(STDIN_FILENO, &key, 1) > 0) {
         key = std::toupper(key);
-        if (key == 'C') return true;
-        if (key == 'E') return false;
+        if (key == 'C') { result = true;  break; }
+        if (key == 'E') { result = false; break; }
         std::cout << "Enter C or E" << std::endl;
     }
-    return false;
+    system("stty min 0 time 10");
+    return result;
 }

@@ -3,5 +3,7 @@
 //
 #ifndef ASSIGNMENT3_GAMESTATE_H
 #define ASSIGNMENT3_GAMESTATE_H
+
 enum class GameState { Play, Pause, GameOver, Exit, Menu};
+
 #endif //ASSIGNMENT3_GAMESTATE_H

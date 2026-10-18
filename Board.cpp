@@ -3,8 +3,8 @@
 //
 
 #include "Board.h"
-
 #include <iostream>
+
 Board :: Board(int width, int height) : width(width), height(height), table(height, std::vector<Point>(width)){}
 bool Board::couldBePlaced(const Tetromino& t) {
     for (const Point& p: t.getCells()) {
@@ -19,6 +19,7 @@ bool Board::couldBePlaced(const Tetromino& t) {
     }
     return true;
 }
+
 void Board::blockToBoard(const Tetromino& t) {
     for (const Point& p: t.getCells()) {
         int x = p.getX();
@@ -27,6 +28,7 @@ void Board::blockToBoard(const Tetromino& t) {
         table[x][y].color = t.getColor();
     }
 }
+
 int Board::ClearFullLines() {
     int quantity = 0;
     for (int i = height - 1; i >= 0;) {

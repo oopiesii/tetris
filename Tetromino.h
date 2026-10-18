@@ -6,7 +6,9 @@
 #define ASSIGNMENT3_TETROMINO_H
 #include <array>
 #include "Point.h"
-enum class TetrominoType {J, L, O, I, S, Z, T};
+
+enum class TetrominoType {J, L, O, I, S, Z, T, Count};
+
 class Tetromino {
     public:
         Tetromino(TetrominoType tetrominoType);

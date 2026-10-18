@@ -28,10 +28,10 @@ class Game {
         void setbestscore();
         void finish();
         bool ShowMenu();
-private:
-    int points = 0;
-    int bestscore = 0;
 
+    private:
+        int points = 0;
+        int bestscore = 0;
 };
 
 

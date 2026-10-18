@@ -5,10 +5,8 @@
 #ifndef ASSIGNMENT3_BOARD_H
 #define ASSIGNMENT3_BOARD_H
 #include <vector>
-
 #include "Point.h"
 #include "Tetromino.h"
-
 
 class Board {
     public:
@@ -18,9 +16,8 @@ class Board {
         void blockToBoard(const Tetromino& t);
         int ClearFullLines();
     private:
-        int width;
-        int height;
+        int width = 0;
+        int height = 0;
 };
-
 
 #endif //ASSIGNMENT3_BOARD_H

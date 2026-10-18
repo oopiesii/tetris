@@ -3,7 +3,6 @@
 //
 
 #include "SaveLoadManager.h"
-
 #include <fstream>
 
 void SaveLoadManager::SaveBestResult(int res) {
@@ -12,6 +11,7 @@ void SaveLoadManager::SaveBestResult(int res) {
         file << res << std::endl;
     }
 }
+
 int SaveLoadManager::LoadBestResult() {
     std::ifstream file("BestResultTetris.txt");
     int bestresult = 0;

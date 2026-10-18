@@ -3,15 +3,15 @@
 //
 
 #include "Tetromino.h"
-
-#include <iostream>
 #include <ostream>
+
 Tetromino::Tetromino(TetrominoType tetrominoType): tetrominoType(tetrominoType),rotation(0),position(0, 3) {setShape();setColor();}
 void Tetromino::clearShape() {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
             shape[i][j] = 0;
 }
+
 TetrominoType Tetromino::getType() const {
     return tetrominoType;
 }
@@ -64,9 +64,11 @@ void Tetromino::setShape() {
             break;
     }
 }
+
 bool Tetromino::isEmpty(int row, int col) const {
     return shape[row][col] == 0;
 }
+
 void Tetromino::rotate90() {
     clearShape();
     switch(tetrominoType) {
@@ -115,6 +117,7 @@ void Tetromino::rotate90() {
             break;
     }
 }
+
 void Tetromino::rotate180() {
     clearShape();
     switch(tetrominoType) {
@@ -163,6 +166,7 @@ void Tetromino::rotate180() {
             break;
     }
 }
+
 void Tetromino::rotate270() {
     clearShape();
     switch(tetrominoType) {
@@ -211,6 +215,7 @@ void Tetromino::rotate270() {
             break;
     }
 }
+
 void Tetromino::rotate() {
     rotation = (rotation + 1) % 4;
     switch (rotation) {
@@ -220,15 +225,19 @@ void Tetromino::rotate() {
         case 3: rotate270();  break;
     }
 }
+
 void Tetromino::moveleft() {
     position.setY(position.getY() - 1);
 }
+
 void Tetromino::moveright() {
     position.setY(position.getY() + 1);
 }
+
 void Tetromino::movedown() {
     position.setX(position.getX() + 1);
 }
+
 std::array<Point, 4> Tetromino::getCells() const {
     std::array<Point, 4> result;
     int k = 0;
@@ -258,6 +267,7 @@ std::array<Point, 4> Tetromino::getCells() const {
     }
     return result;
 }
+
 void Tetromino::setColor() {
     switch(tetrominoType) {
         case TetrominoType::T:
@@ -283,6 +293,7 @@ void Tetromino::setColor() {
             break;
     }
 }
+
 Color Tetromino::getColor() const {
     return color;
 }
