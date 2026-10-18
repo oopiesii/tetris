@@ -13,10 +13,6 @@
 
 class Game {
     public:
-        GameState gm = GameState::Play;
-        InputHandler input = InputHandler();
-        Board board = Board();
-        SaveLoadManager slm = SaveLoadManager();
         Game()=default;
         void start();
         void drawboard(const Tetromino& currenttetromino);
@@ -30,6 +26,10 @@ class Game {
         bool ShowMenu();
 
     private:
+        GameState gm = GameState::Play;
+        InputHandler input = InputHandler();
+        Board board = Board();
+        SaveLoadManager slm = SaveLoadManager();
         int points = 0;
         int bestscore = 0;
 };

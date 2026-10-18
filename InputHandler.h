@@ -10,7 +10,6 @@ class InputHandler {
     public:
         InputHandler()=default;
         Action getAction();
-        char key;
 };
 
 #endif //ASSIGNMENT3_INPUTHANDLER_H

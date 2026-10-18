@@ -17,8 +17,8 @@ class Point {
         void setY(int y);
         bool isOccupied() const;
         void setFilled(bool filled);
-        Color color = Color::None;
     private:
+        Color color = Color::None;
         int x;
         int y;
         bool filled = false;

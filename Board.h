@@ -11,11 +11,11 @@
 class Board {
     public:
         Board(int width = 10, int height = 20);
-        std::vector<std::vector<Point>> table;
         bool couldBePlaced(const Tetromino& t);
         void blockToBoard(const Tetromino& t);
         int ClearFullLines();
     private:
+        std::vector<std::vector<Point>> table;
         int width = 0;
         int height = 0;
 };
