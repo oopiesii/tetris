@@ -5,6 +5,8 @@
 #ifndef ASSIGNMENT3_TETROMINO_H
 #define ASSIGNMENT3_TETROMINO_H
 #include <array>
+#include "Cell.h"
+#include "Color.h"
 #include "Point.h"
 
 enum class TetrominoType {J, L, O, I, S, Z, T, Count};
@@ -31,6 +33,7 @@ class Tetromino {
         int rotation;
         int shape[4][4]{};
         Point position;
+        Cell cell = Cell(Color::None);
         void rotate90();
         void rotate180();
         void rotate270();

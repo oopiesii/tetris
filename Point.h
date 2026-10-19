@@ -6,8 +6,6 @@
 #ifndef ASSIGNMENT3_POINT_H
 #define ASSIGNMENT3_POINT_H
 
-#include "Color.h"
-
 class Point {
     public:
         Point(int x = 0, int y = 0);
@@ -15,13 +13,9 @@ class Point {
         int getY() const;
         void setX(int x);
         void setY(int y);
-        bool isOccupied() const;
-        void setFilled(bool filled);
     private:
-        Color color = Color::None;
         int x;
         int y;
-        bool filled = false;
 };
 
 #endif // ASSIGNMENT3_POINT_H

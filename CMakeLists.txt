@@ -22,4 +22,6 @@ add_executable(assignment3 main.cpp
         InputHandler.h
         SaveLoadManager.cpp
         SaveLoadManager.h
+        Cell.cpp
+        Cell.h
 )

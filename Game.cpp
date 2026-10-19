@@ -145,8 +145,8 @@ void Game::drawboard(const Tetromino& currenttetromino) {
             if (isTetrominoCell) {
                 std::cout <<getcolor(currenttetromino.getColor()) << "███" << "\033[0m";;
             }
-            else if (board.table[i][j].isOccupied()) {
-                std::cout <<getcolor(board.table[i][j].color) << "███" << "\033[0m";;
+            else if (board.isOccupied(i, j)) {
+                std::cout <<getcolor(board.getColor(i,j)) << "███" << "\033[0m";;
             }
             else {
                 std::cout << ". .";
