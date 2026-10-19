@@ -21,9 +21,13 @@ class Game {
         Tetromino generatenewtetromino();
         bool proccessaction(Action action, Tetromino& t);
         void setscore(int score);
-        void setbestscore();
+        void loadbestscore();
         void finish();
         bool ShowMenu();
+        bool spawn(Tetromino t);
+        void update(Tetromino& t);
+        void lockpiece(Tetromino t);
+        void addpoints(int lines);
 
     private:
         GameState gm = GameState::Play;

@@ -10,40 +10,17 @@
 
 void Game::start() {
     system("stty -icanon -echo min 0 time 10");
-    setbestscore();
+    loadbestscore();
     while (gm != GameState::GameOver && gm != GameState::Exit) {
         Tetromino t = generatenewtetromino();
-        if (!board.couldBePlaced(t)) {
-            gm = GameState::GameOver;
+        if (!spawn(t)) {
             break;
         }
-        bool landed = false;
-        while (!landed) {
-            drawboard(t);
-            Action action = input.getAction();
-            if (action == Action::None) {
-                if (gm == GameState::Pause) continue;
-                action = Action::MoveDown;
-            }
-            if (action == Action::Exit) {
-                gm = GameState::Exit;
-                break;
-            }
-            if (action == Action::Menu) {
-                bool resume = ShowMenu();
-                if (resume) {
-                    gm = GameState::Play;
-                    continue;
-                }
-                gm = GameState::Exit;
-                break;
-            }
-            landed = proccessaction(action, t);
-        }
+        update(t);
         if (gm == GameState::Exit) break;
-
+        lockpiece(t);
         int cleared = board.ClearFullLines();
-        points += 100 * cleared;
+        addpoints(cleared);
     }
     system("stty sane");
     finish();
@@ -89,12 +66,6 @@ bool Game::proccessaction(Action action, Tetromino& t) {
             }
             board.blockToBoard(t);
             return true;
-        case Action::Pause:
-            gm = (gm == GameState::Pause) ? GameState::Play : GameState::Pause;
-            break;
-        case Action::Menu:
-            gm = GameState::Menu;
-            break;
         default:
             break;
     }
@@ -175,7 +146,7 @@ void Game::setscore(int score) {
     points += score;
 }
 
-void Game::setbestscore() {
+void Game::loadbestscore() {
     bestscore = slm.LoadBestResult();
 }
 
@@ -210,4 +181,48 @@ bool Game::ShowMenu() {
     }
     system("stty min 0 time 10");
     return result;
+}
+
+bool Game::spawn(Tetromino t) {
+    if (!board.couldBePlaced(t)) {
+        gm = GameState::GameOver;
+        return false;
+    }
+    return true;
+}
+
+void Game::update(Tetromino& t) {
+    bool landed = false;
+    while (!landed) {
+        drawboard(t);
+        Action action = input.getAction();
+        if (action == Action::None) {
+            if (gm == GameState::Pause) continue;
+            action = Action::MoveDown;
+        }
+        if (action == Action::Exit) {
+            gm = GameState::Exit;
+            break;
+        }
+        if (action == Action::Menu) {
+            gm = GameState::Menu;
+            bool resume = ShowMenu();
+            if (resume) {
+                gm = GameState::Play;
+                continue;
+            }
+            gm = GameState::Exit;
+            break;
+        }
+        landed = proccessaction(action, t);
+    }
+}
+
+void Game::lockpiece(Tetromino t) {
+    board.blockToBoard(t);
+}
+
+
+void Game::addpoints(int lines) {
+    points += 100 * lines;
 }

@@ -17,7 +17,6 @@ class Board {
         bool isOccupied(int row, int col);
         Color getColor(int row, int col);
     private:
-        std::vector<std::vector<Point>> table;
         std::vector<std::vector<Cell>> cells;
         int width = 0;
         int height = 0;

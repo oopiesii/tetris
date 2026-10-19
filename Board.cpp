@@ -7,16 +7,17 @@
 
 Board :: Board(int width, int height) : width(width), height(height), cells(height, std::vector<Cell>(width, Cell(Color::None))){}
 bool Board::couldBePlaced(const Tetromino& t) {
-    for (const Point& p: t.getCells()) {
+    for (const Point& p : t.getCells()) {
         int x = p.getX();
         int y = p.getY();
         if (x < 0 || x >= height || y < 0 || y >= width) {
             return false;
         }
-        if (cells[x][y].getColor() == Color::None) {
+        if (cells[x][y].getColor() != Color::None) {
             return false;
         }
     }
+
     return true;
 }
 
@@ -24,7 +25,6 @@ void Board::blockToBoard(const Tetromino& t) {
     for (const Point& p: t.getCells()) {
         int x = p.getX();
         int y = p.getY();
-        // cells[x][y].setFilled(true);
         cells[x][y].setColor(t.getColor());
     }
 }
@@ -52,9 +52,8 @@ int Board::ClearFullLines() {
     return quantity;
 }
 
-bool Board::isOccupied(int row, int col)  {
-    if (cells[row][col].getColor() == Color::None) {return false;}
-    if (cells[row][col].getColor() != Color::None) {return true;}
+bool Board::isOccupied(int row, int col) {
+    return cells[row][col].getColor() != Color::None;
 }
 
 Color Board::getColor(int row, int col)  {
