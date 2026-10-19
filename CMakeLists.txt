@@ -24,4 +24,20 @@ add_executable(assignment3 main.cpp
         SaveLoadManager.h
         Cell.cpp
         Cell.h
+        Command.cpp
+        Command.h
+        MoveLeftCommand.cpp
+        MoveLeftCommand.h
+        MoveRightCommand.cpp
+        MoveRightCommand.h
+        RotateCommand.cpp
+        RotateCommand.h
+        SoftDropCommand.cpp
+        SoftDropCommand.h
+        HardDropCommand.cpp
+        HardDropCommand.h
+        MenuCommand.cpp
+        MenuCommand.h
+        ExitCommand.cpp
+        ExitCommand.h
 )

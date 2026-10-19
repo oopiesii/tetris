@@ -4,21 +4,32 @@
 #include "InputHandler.h"
 #include <iostream>
 #include <unistd.h>
-Action InputHandler::getAction() {
+
+#include "ExitCommand.h"
+#include "HardDropCommand.h"
+#include "MenuCommand.h"
+#include "MoveLeftCommand.h"
+#include "MoveRightCommand.h"
+#include "RotateCommand.h"
+#include "SoftDropCommand.h"
+
+std::unique_ptr<Command> InputHandler::getAction() {
     char key;
-    while (read(STDIN_FILENO, &key, 1) > 0) {
-        switch (std::toupper(key)) {
-            case 'A': return Action::MoveLeft;
-            case 'D': return Action::MoveRight;
-            case 'S': return Action::MoveDown;
-            case 'R': return Action::Rotate;
-            case 'M': return Action::Menu;
-            case 'P': return Action::Pause;
-            case '1': return Action::HardDrop;
-            case 'E': return Action::Exit;
-            default:  break;
-        }
+
+    if (read(STDIN_FILENO, &key, 1) <= 0) {
+        return nullptr;
     }
-    return Action::None;
+
+    switch (std::toupper(static_cast<unsigned char>(key))) {
+        case 'A': return std::make_unique<MoveLeftCommand>();
+        case 'D': return std::make_unique<MoveRightCommand>();
+        case 'S': return std::make_unique<SoftDropCommand>();
+        case 'R': return std::make_unique<RotateCommand>();
+        case '1': return std::make_unique<HardDropCommand>();
+        case 'M': return std::make_unique<MenuCommand>();
+        case 'E': return std::make_unique<ExitCommand>();
+
+        default: return nullptr;
+    }
 }//cd ~/CLionProjects/assignment3
 //./cmake-build-debuag/assignment3

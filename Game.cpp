@@ -11,65 +11,47 @@
 void Game::start() {
     system("stty -icanon -echo min 0 time 10");
     loadbestscore();
+
     while (gm != GameState::GameOver && gm != GameState::Exit) {
-        Tetromino t = generatenewtetromino();
-        if (!spawn(t)) {
+        current = generatenewtetromino();
+        landed = false;
+
+        if (!spawn(current)) {
             break;
         }
-        update(t);
+
+        update();
+
         if (gm == GameState::Exit) break;
-        lockpiece(t);
+
+        lockpiece(current);
+
         int cleared = board.ClearFullLines();
         addpoints(cleared);
     }
+
     system("stty sane");
     finish();
 }
 
-bool Game::proccessaction(Action action, Tetromino& t) {
-    Tetromino test = t;
+void Game::proccessaction(Action action) {
     switch (action) {
         case Action::MoveLeft:
-            test.moveleft();
-            if (board.couldBePlaced(test)) t = test;
+            tryMoveLeft();
             break;
         case Action::MoveRight:
-            test.moveright();
-            if (board.couldBePlaced(test)) t = test;
+            tryMoveRight();
             break;
         case Action::Rotate:
-            test.rotate();
-            if (board.couldBePlaced(test)) t = test;
+            tryRotate();
             break;
-        case Action::MoveDown: {
-            test.movedown();
-            if (board.couldBePlaced(test)) {
-                t = test;
-                Tetromino below = t;
-                below.movedown();
-                if (!board.couldBePlaced(below)) {
-                    board.blockToBoard(t);
-                    return true;
-                }
-            } else {
-                board.blockToBoard(t);
-                return true;
-            }
+        case Action::MoveDown:
+            softDrop();
             break;
-        }
         case Action::HardDrop:
-            while (true) {
-                test = t;
-                test.movedown();
-                if (!board.couldBePlaced(test)) break;
-                t = test;
-            }
-            board.blockToBoard(t);
-            return true;
-        default:
+            hardDrop();
             break;
     }
-    return false;
 }
 
 Tetromino Game::generatenewtetromino() {
@@ -191,30 +173,18 @@ bool Game::spawn(Tetromino t) {
     return true;
 }
 
-void Game::update(Tetromino& t) {
-    bool landed = false;
-    while (!landed) {
-        drawboard(t);
-        Action action = input.getAction();
-        if (action == Action::None) {
-            if (gm == GameState::Pause) continue;
-            action = Action::MoveDown;
+void Game::update() {
+    while (!landed && gm != GameState::Exit) {
+        drawboard(current);
+
+        auto command = input.getAction();
+
+        if (command) {
+            command->execute(*this);
         }
-        if (action == Action::Exit) {
-            gm = GameState::Exit;
-            break;
+        else if (gm == GameState::Play) {
+            softDrop();
         }
-        if (action == Action::Menu) {
-            gm = GameState::Menu;
-            bool resume = ShowMenu();
-            if (resume) {
-                gm = GameState::Play;
-                continue;
-            }
-            gm = GameState::Exit;
-            break;
-        }
-        landed = proccessaction(action, t);
     }
 }
 
@@ -225,4 +195,39 @@ void Game::lockpiece(Tetromino t) {
 
 void Game::addpoints(int lines) {
     points += 100 * lines;
+}
+
+void Game::tryMoveLeft() {
+    Tetromino test = current;
+    test.moveleft();
+    if (board.couldBePlaced(test)) current = test;
+}
+
+void Game::tryMoveRight() {
+    Tetromino test = current;
+    test.moveright();
+    if (board.couldBePlaced(test)) current = test;
+}
+
+void Game::tryRotate() {
+    Tetromino test = current;
+    test.rotate();
+    if (board.couldBePlaced(test)) current = test;
+}
+
+void Game::softDrop() {
+    Tetromino test = current;
+    test.movedown();
+    if (board.couldBePlaced(test)) current = test;
+    else landed = true;
+}
+
+void Game::hardDrop() {
+    Tetromino test = current;
+    test.movedown();
+    while (board.couldBePlaced(test)) {
+        current = test;
+        test.movedown();
+    }
+    landed = true;
 }

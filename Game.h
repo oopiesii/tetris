@@ -19,18 +19,24 @@ class Game {
         void drawtetromino(Tetromino t);
         std::string getcolor(Color color);
         Tetromino generatenewtetromino();
-        bool proccessaction(Action action, Tetromino& t);
+        void proccessaction(Action action);
         void setscore(int score);
         void loadbestscore();
         void finish();
         bool ShowMenu();
         bool spawn(Tetromino t);
-        void update(Tetromino& t);
+        void update();
         void lockpiece(Tetromino t);
         void addpoints(int lines);
-
-    private:
+        void tryMoveRight();
+        void tryMoveLeft();
+        void tryRotate();
+        void softDrop();
+        void hardDrop();
         GameState gm = GameState::Play;
+    private:
+        Tetromino current{TetrominoType::T};
+        bool landed = false;
         InputHandler input = InputHandler();
         Board board = Board();
         SaveLoadManager slm = SaveLoadManager();
