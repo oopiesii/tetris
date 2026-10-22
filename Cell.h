@@ -11,7 +11,7 @@ class Cell {
 public:
     Cell(Color color);
     void setColor(Color color);
-    Color getColor();
+    Color getColor() const;
 private:
     Color color = Color::None;
 };

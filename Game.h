@@ -19,7 +19,6 @@ class Game {
         void drawtetromino(Tetromino t);
         std::string getcolor(Color color);
         Tetromino generatenewtetromino();
-        void proccessaction(Action action);
         void setscore(int score);
         void loadbestscore();
         void finish();
