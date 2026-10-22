@@ -157,8 +157,16 @@ bool Game::ShowMenu() {
     char key;
     while (read(STDIN_FILENO, &key, 1) > 0) {
         key = std::toupper(key);
-        if (key == 'C') { result = true;  break; }
-        if (key == 'E') { result = false; break; }
+        if (key == 'C') {
+            gm = GameState::Play;
+            result = true;
+            break;
+        }
+        if (key == 'E') {
+            gm = GameState::Exit;
+            result = false;
+            break;
+        }
         std::cout << "Enter C or E" << std::endl;
     }
     system("stty min 0 time 10");
