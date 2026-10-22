@@ -11,7 +11,7 @@
 class Board {
     public:
         Board(int width = 10, int height = 20);
-        bool couldBePlaced(const Tetromino& t);
+        bool couldBePlaced(const Tetromino& t) const;
         void blockToBoard(const Tetromino& t);
         int ClearFullLines();
         bool isOccupied(int row, int col);

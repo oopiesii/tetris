@@ -6,7 +6,7 @@
 #include <iostream>
 
 Board :: Board(int width, int height) : width(width), height(height), cells(height, std::vector<Cell>(width, Cell(Color::None))){}
-bool Board::couldBePlaced(const Tetromino& t) {
+bool Board::couldBePlaced(const Tetromino& t) const {
     for (const Point& p : t.getCells()) {
         int x = p.getX();
         int y = p.getY();

@@ -34,26 +34,6 @@ void Game::start() {
     finish();
 }
 
-void Game::proccessaction(Action action) {
-    switch (action) {
-        case Action::MoveLeft:
-            tryMoveLeft();
-            break;
-        case Action::MoveRight:
-            tryMoveRight();
-            break;
-        case Action::Rotate:
-            tryRotate();
-            break;
-        case Action::MoveDown:
-            softDrop();
-            break;
-        case Action::HardDrop:
-            hardDrop();
-            break;
-    }
-}
-
 Tetromino Game::generatenewtetromino() {
     static std::mt19937 gen(std::random_device{}());
     static std::uniform_int_distribution<int> dist(0, static_cast<int>(TetrominoType::Count) - 1);
@@ -79,8 +59,8 @@ void Game::drawtetromino(Tetromino t) {
 void Game::drawboard(const Tetromino& currenttetromino) {
     std::system("clear");
     std::cout <<"Hello! That is Tetris by Polina Stupak)" << std::endl;
-    std::cout <<"Press A to move left, D to move right, S to go down, R to rotate + enter" << std::endl;
-    std::cout <<"To go to menu press M, to end game press E + enter" << std::endl;
+    std::cout <<"Press A to move left, D to move right, S to go down, R to rotate" << std::endl;
+    std::cout <<"To go to menu press M" << std::endl;
     std::cout <<"Best score: " << bestscore << "👑" << std::endl;
     std::cout <<"Your score: " << points << std::endl;
     std::array<Point, 4> c = currenttetromino.getCells();
