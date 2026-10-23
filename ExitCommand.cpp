@@ -7,6 +7,6 @@
 #include "GameState.h"
 
 void ExitCommand::execute(Game& g) {
-    g.gm == GameState::Exit;
+    g.gm = GameState::Exit;
     g.finish();
 }
