@@ -40,4 +40,6 @@ add_executable(assignment3 main.cpp
         MenuCommand.h
         ExitCommand.cpp
         ExitCommand.h
+        RestartCommand.cpp
+        RestartCommand.h
 )

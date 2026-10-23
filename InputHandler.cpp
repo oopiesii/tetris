@@ -10,6 +10,7 @@
 #include "MenuCommand.h"
 #include "MoveLeftCommand.h"
 #include "MoveRightCommand.h"
+#include "RestartCommand.h"
 #include "RotateCommand.h"
 #include "SoftDropCommand.h"
 
@@ -28,7 +29,7 @@ std::unique_ptr<Command> InputHandler::getAction() {
         case '1': return std::make_unique<HardDropCommand>();
         case 'M': return std::make_unique<MenuCommand>();
         case 'E': return std::make_unique<ExitCommand>();
-
+        case 'H': return std::make_unique<RestartCommand>();
         default: return nullptr;
     }
 }//cd ~/CLionProjects/assignment3

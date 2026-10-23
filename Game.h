@@ -32,6 +32,8 @@ class Game {
         void tryRotate();
         void softDrop();
         void hardDrop();
+        void SaveGame();
+        void LoadGame();
         GameState gm = GameState::Play;
     private:
         Tetromino current{TetrominoType::T};

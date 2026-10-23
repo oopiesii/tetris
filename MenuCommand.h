@@ -6,6 +6,8 @@
 #define ASSIGNMENT3_MENUCOMMAND_H
 
 #include "Command.h"
+#include "Game.h"
+#include "SaveLoadManager.h"
 
 class MenuCommand : public Command {
 public:

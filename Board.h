@@ -16,6 +16,9 @@ class Board {
         int ClearFullLines();
         bool isOccupied(int row, int col);
         Color getColor(int row, int col);
+        const std::vector<std::vector<Cell>>& GetCells() const;
+        std::vector<std::vector<Cell>>& GetCells();
+        void ClearBoard();
     private:
         std::vector<std::vector<Cell>> cells;
         int width = 0;

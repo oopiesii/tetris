@@ -59,3 +59,17 @@ bool Board::isOccupied(int row, int col) {
 Color Board::getColor(int row, int col)  {
     return cells[row][col].getColor();
 }
+
+const std::vector<std::vector<Cell>>& Board::GetCells() const {
+    return cells;
+}
+std::vector<std::vector<Cell>>& Board::GetCells() {
+    return cells;
+}
+void Board::ClearBoard() {
+    for (std::vector<Cell>& row : cells) {
+        for (Cell& cell : row) {
+            cell.setColor(Color::None);
+        }
+    }
+}

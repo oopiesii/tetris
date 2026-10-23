@@ -6,12 +6,10 @@
 #include <random>
 #include <unistd.h>
 
-#include "Action.h"
-
 void Game::start() {
     system("stty -icanon -echo min 0 time 10");
     loadbestscore();
-
+    LoadGame();
     while (gm != GameState::GameOver && gm != GameState::Exit) {
         current = generatenewtetromino();
         landed = false;
@@ -60,7 +58,7 @@ void Game::drawboard(const Tetromino& currenttetromino) {
     std::system("clear");
     std::cout <<"Hello! That is Tetris by Polina Stupak)" << std::endl;
     std::cout <<"Press A to move left, D to move right, S to go down, R to rotate" << std::endl;
-    std::cout <<"To go to menu press M" << std::endl;
+    std::cout <<"To go to menu press M, H to restart " << std::endl;
     std::cout <<"Best score: " << bestscore << "👑" << std::endl;
     std::cout <<"Your score: " << points << std::endl;
     std::array<Point, 4> c = currenttetromino.getCells();
@@ -116,6 +114,8 @@ void Game::finish() {
     std::system("clear");
     if (gm == GameState::GameOver) {
         std::cout << "GAMEOVER" << std::endl;
+        board.ClearBoard();
+        SaveGame();
     }
     if (points > bestscore) {
         std::cout << "Your new best score: " << points << "!!!" << std::endl;
@@ -143,6 +143,7 @@ bool Game::ShowMenu() {
             break;
         }
         if (key == 'E') {
+            SaveGame();
             gm = GameState::Exit;
             result = false;
             break;
@@ -218,4 +219,10 @@ void Game::hardDrop() {
         test.movedown();
     }
     landed = true;
+}
+void Game::SaveGame() {
+    slm.SaveCurrentBoard(board.GetCells());
+}
+void Game::LoadGame() {
+    slm.LoadGame(board.GetCells());
 }
