@@ -34,6 +34,7 @@ class Game {
         void hardDrop();
         void SaveGame();
         void LoadGame();
+        void restart();
         GameState gm = GameState::Play;
     private:
         Tetromino current{TetrominoType::T};
@@ -43,6 +44,7 @@ class Game {
         SaveLoadManager slm = SaveLoadManager();
         int points = 0;
         int bestscore = 0;
+        bool restartRequested = false;
 };
 
 

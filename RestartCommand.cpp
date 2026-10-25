@@ -3,7 +3,8 @@
 //
 
 #include "RestartCommand.h"
+#include "Game.h"
+
 void RestartCommand::execute(Game& g) {
-    b.ClearBoard();
-    g.start();
+    g.restart();
 }

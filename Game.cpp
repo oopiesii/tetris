@@ -20,6 +20,15 @@ void Game::start() {
 
         update();
 
+        if (restartRequested) {
+            restartRequested = false;
+            board.ClearBoard();
+            points = 0;
+            landed = false;
+            gm = GameState::Play;
+            continue;
+        }
+
         if (gm == GameState::Exit) break;
 
         lockpiece(current);
@@ -225,4 +234,8 @@ void Game::SaveGame() {
 }
 void Game::LoadGame() {
     slm.LoadGame(board.GetCells());
+}
+void Game::restart() {
+    restartRequested = true;
+    landed = true;
 }
