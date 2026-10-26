@@ -15,22 +15,38 @@
 #include "SoftDropCommand.h"
 
 std::unique_ptr<Command> InputHandler::getAction() {
-    char key;
-
-    if (read(STDIN_FILENO, &key, 1) <= 0) {
+    if (inputTimer.getElapsedTime().asSeconds() >= delay) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+            inputTimer.restart();
+            return std::make_unique<MoveLeftCommand>();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+            inputTimer.restart();
+            return std::make_unique<MoveRightCommand>();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+            inputTimer.restart();
+            return std::make_unique<SoftDropCommand>();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+            inputTimer.restart();
+            return std::make_unique<RotateCommand>();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M)) {
+            inputTimer.restart();
+            return std::make_unique<MenuCommand>();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
+            inputTimer.restart();
+            return std::make_unique<ExitCommand>();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::H)) {
+            inputTimer.restart();
+            return std::make_unique<RestartCommand>();
+        }
         return nullptr;
     }
-
-    switch (std::toupper(static_cast<unsigned char>(key))) {
-        case 'A': return std::make_unique<MoveLeftCommand>();
-        case 'D': return std::make_unique<MoveRightCommand>();
-        case 'S': return std::make_unique<SoftDropCommand>();
-        case 'R': return std::make_unique<RotateCommand>();
-        case '1': return std::make_unique<HardDropCommand>();
-        case 'M': return std::make_unique<MenuCommand>();
-        case 'E': return std::make_unique<ExitCommand>();
-        case 'H': return std::make_unique<RestartCommand>();
-        default: return nullptr;
+    if (inputTimer.getElapsedTime().asSeconds() < delay) {
+        return nullptr;
     }
-}//cd ~/CLionProjects/assignment3
-//./cmake-build-debuag/assignment3
+}

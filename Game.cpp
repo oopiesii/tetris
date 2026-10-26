@@ -4,7 +4,9 @@
 #include "Game.h"
 #include <iostream>
 #include <random>
-#include <unistd.h>
+
+#include "ExitCommand.h"
+#include "MoveLeftCommand.h"
 
 void Game::start() {
     system("stty -icanon -echo min 0 time 10");
@@ -17,7 +19,6 @@ void Game::start() {
         if (!spawn(current)) {
             break;
         }
-
         update();
 
         if (restartRequested) {
@@ -36,7 +37,6 @@ void Game::start() {
         int cleared = board.ClearFullLines();
         addpoints(cleared);
     }
-
     system("stty sane");
     finish();
 }
@@ -64,37 +64,7 @@ void Game::drawtetromino(Tetromino t) {
 }
 
 void Game::drawboard(const Tetromino& currenttetromino) {
-    std::system("clear");
-    std::cout <<"Hello! That is Tetris by Polina Stupak)" << std::endl;
-    std::cout <<"Press A to move left, D to move right, S to go down, R to rotate" << std::endl;
-    std::cout <<"To go to menu press M, H to restart " << std::endl;
-    std::cout <<"Best score: " << bestscore << "👑" << std::endl;
-    std::cout <<"Your score: " << points << std::endl;
-    std::array<Point, 4> c = currenttetromino.getCells();
-    for (int i = 0; i < 20; i++) {
-        for (int j = 0; j < 10; j++) {
-            bool isTetrominoCell = false;
-
-            for (const Point& cell : c) {
-                if (cell.getX() == i && cell.getY() == j) {
-                    isTetrominoCell = true;
-                    break;
-                }
-            }
-
-            if (isTetrominoCell) {
-                std::cout <<getcolor(currenttetromino.getColor()) << "███" << "\033[0m";;
-            }
-            else if (board.isOccupied(i, j)) {
-                std::cout <<getcolor(board.getColor(i,j)) << "███" << "\033[0m";;
-            }
-            else {
-                std::cout << ". .";
-            }
-        }
-
-        std::cout << '\n';
-    }
+    render.render(board, currenttetromino, points, bestscore);
 }
 
 std::string Game::getcolor(Color color) {
@@ -120,47 +90,48 @@ void Game::loadbestscore() {
 }
 
 void Game::finish() {
-    std::system("clear");
-    if (gm == GameState::GameOver) {
-        std::cout << "GAMEOVER" << std::endl;
-        board.ClearBoard();
-        SaveGame();
-    }
     if (points > bestscore) {
-        std::cout << "Your new best score: " << points << "!!!" << std::endl;
         bestscore = points;
-        slm.SaveBestResult(points);
+        slm.SaveBestResult(bestscore);
     }
-    std::cout << "Your score: " << points << std::endl;
-
-}
-
-bool Game::ShowMenu() {
-    std::system("clear");
-    std::cout << "BEST SCORE: " << bestscore << std::endl;
-    std::cout << "YOUR CURRENT SCORE: " << points << std::endl;
-    std::cout << "To end game enter E" << std::endl;
-    std::cout << "To continue game enter C" << std::endl;
-    system("stty min 1 time 0");
-    bool result = false;
-    char key;
-    while (read(STDIN_FILENO, &key, 1) > 0) {
-        key = std::toupper(key);
-        if (key == 'C') {
-            gm = GameState::Play;
-            result = true;
+    if (gm != GameState::GameOver) {
+        return;
+    }
+    board.ClearBoard();
+    SaveGame();
+    while (render.isOpen()) {
+        while (const auto event = render.getWindow().pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                render.close();
+            }
+        }
+        if (!render.isOpen()) {
             break;
         }
-        if (key == 'E') {
+        render.drawGameOver(bestscore, points);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
+            break;
+        }
+    }
+}
+
+void Game::ShowMenu() {
+    gm = GameState::Menu;
+    bool result = false;
+    if (inputTimer.getElapsedTime().asSeconds() >= buttonDelay) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C)) {
+            inputTimer.restart();
+            gm = GameState::Play;
+            result = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
+            inputTimer.restart();
             SaveGame();
             gm = GameState::Exit;
             result = false;
-            break;
         }
-        std::cout << "Enter C or E" << std::endl;
     }
-    system("stty min 0 time 10");
-    return result;
+    render.Menu();
 }
 
 bool Game::spawn(Tetromino t) {
@@ -173,16 +144,35 @@ bool Game::spawn(Tetromino t) {
 
 void Game::update() {
     while (!landed && gm != GameState::Exit) {
-        drawboard(current);
-
-        auto command = input.getAction();
-
+        while (const auto event = render.getWindow().pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                render.close();
+                gm = GameState::Exit;
+                return;
+            }
+        }
+        if (!render.isOpen()) {
+            gm = GameState::Exit;
+            return;
+        }
+        std::unique_ptr<Command> command = input.getAction();
         if (command) {
             command->execute(*this);
         }
-        else if (gm == GameState::Play) {
-            softDrop();
+        if (gm == GameState::Exit || restartRequested) {
+            return;
         }
+        if (gm == GameState::Menu) {
+            ShowMenu();
+            continue;
+        }
+        if (inputTimer.getElapsedTime().asSeconds() >= delay) {
+            if (gm == GameState::Play) {
+                inputTimer.restart();
+                softDrop();
+            }
+        }
+        drawboard(current);
     }
 }
 

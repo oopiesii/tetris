@@ -6,5 +6,5 @@
 #include "Game.h"
 
 void MenuCommand::execute(Game& g) {
-    g.ShowMenu();
+    g.gm = GameState::Menu;
 }

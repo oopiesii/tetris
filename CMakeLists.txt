@@ -6,9 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(assignment3 main.cpp
         Tetromino.cpp
         Tetromino.h
-        GameState.cpp
         GameState.h
-        Action.cpp
         Action.h
         Point.cpp
         Point.h
@@ -16,7 +14,6 @@ add_executable(assignment3 main.cpp
         Game.h
         Board.cpp
         Board.h
-        Color.cpp
         Color.h
         InputHandler.cpp
         InputHandler.h
@@ -24,7 +21,6 @@ add_executable(assignment3 main.cpp
         SaveLoadManager.h
         Cell.cpp
         Cell.h
-        Command.cpp
         Command.h
         MoveLeftCommand.cpp
         MoveLeftCommand.h
@@ -42,4 +38,12 @@ add_executable(assignment3 main.cpp
         ExitCommand.h
         RestartCommand.cpp
         RestartCommand.h
+        Renderer.cpp
+        Renderer.h
 )
+
+list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew")
+
+find_package(SFML 3 REQUIRED COMPONENTS Graphics)
+
+target_link_libraries(assignment3 PRIVATE SFML::Graphics)

@@ -4,9 +4,12 @@
 
 #ifndef ASSIGNMENT3_GAME_H
 #define ASSIGNMENT3_GAME_H
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Board.h"
 #include "GameState.h"
 #include "InputHandler.h"
+#include "Renderer.h"
 #include "SaveLoadManager.h"
 #include "Tetromino.h"
 
@@ -22,7 +25,7 @@ class Game {
         void setscore(int score);
         void loadbestscore();
         void finish();
-        bool ShowMenu();
+        void ShowMenu();
         bool spawn(Tetromino t);
         void update();
         void lockpiece(Tetromino t);
@@ -36,6 +39,7 @@ class Game {
         void LoadGame();
         void restart();
         GameState gm = GameState::Play;
+        Renderer render = Renderer();
     private:
         Tetromino current{TetrominoType::T};
         bool landed = false;
@@ -45,6 +49,9 @@ class Game {
         int points = 0;
         int bestscore = 0;
         bool restartRequested = false;
+        sf::Clock inputTimer;
+        float delay = 0.2f;
+        float buttonDelay = 0.15f;
 };
 
 
