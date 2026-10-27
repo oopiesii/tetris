@@ -6,39 +6,50 @@
 #include <random>
 
 #include "ExitCommand.h"
-#include "MoveLeftCommand.h"
 
 void Game::start() {
-    system("stty -icanon -echo min 0 time 10");
     loadbestscore();
     LoadGame();
-    while (gm != GameState::GameOver && gm != GameState::Exit) {
-        current = generatenewtetromino();
-        landed = false;
+    while (render.isOpen() && gm != GameState::Exit) {
+        while (gm != GameState::GameOver &&
+               gm != GameState::Exit) {
+            current = generatenewtetromino();
+            landed = false;
+            if (!spawn(current)) {
+                gm = GameState::GameOver;
+                break;
+            }
+            inputTimer.restart();
+            update();
+            if (restartRequested) {
+                restartRequested = false;
+                board.ClearBoard();
+                points = 0;
+                landed = false;
+                gm = GameState::Play;
+                continue;
+            }
+            if (gm == GameState::Exit) {
+                break;
+            }
+            lockpiece(current);
 
-        if (!spawn(current)) {
-            break;
-        }
-        update();
-
+            int cleared = board.ClearFullLines();
+            addpoints(cleared);
+               }
+        finish();
         if (restartRequested) {
             restartRequested = false;
             board.ClearBoard();
             points = 0;
             landed = false;
             gm = GameState::Play;
+            inputTimer.restart();
             continue;
         }
-
-        if (gm == GameState::Exit) break;
-
-        lockpiece(current);
-
-        int cleared = board.ClearFullLines();
-        addpoints(cleared);
+        break;
     }
-    system("stty sane");
-    finish();
+    render.close();
 }
 
 Tetromino Game::generatenewtetromino() {
@@ -103,6 +114,12 @@ void Game::finish() {
         while (const auto event = render.getWindow().pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 render.close();
+                gm = GameState::Exit;
+                return;
+            }
+            handleGameOverEvent(*event);
+            if (restartRequested) {
+                return;
             }
         }
         if (!render.isOpen()) {
@@ -116,19 +133,17 @@ void Game::finish() {
 }
 
 void Game::ShowMenu() {
-    gm = GameState::Menu;
-    bool result = false;
     if (inputTimer.getElapsedTime().asSeconds() >= buttonDelay) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C)) {
             inputTimer.restart();
             gm = GameState::Play;
-            result = true;
+            return;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
             inputTimer.restart();
             SaveGame();
             gm = GameState::Exit;
-            result = false;
+            return;
         }
     }
     render.Menu();
@@ -150,10 +165,17 @@ void Game::update() {
                 gm = GameState::Exit;
                 return;
             }
+            if (gm == GameState::Menu) {
+                handleMenuEvent(*event);
+            }
         }
-        if (!render.isOpen()) {
+        if (!render.isOpen() || gm == GameState::Exit) {
             gm = GameState::Exit;
             return;
+        }
+        if (gm == GameState::Menu) {
+            ShowMenu();
+            continue;
         }
         std::unique_ptr<Command> command = input.getAction();
         if (command) {
@@ -166,12 +188,11 @@ void Game::update() {
             ShowMenu();
             continue;
         }
-        if (inputTimer.getElapsedTime().asSeconds() >= delay) {
-            if (gm == GameState::Play) {
-                inputTimer.restart();
-                softDrop();
+        if (gm == GameState::Play && !landed &&
+            inputTimer.getElapsedTime().asSeconds() >= delay) {
+            inputTimer.restart();
+            softDrop();
             }
-        }
         drawboard(current);
     }
 }
@@ -227,5 +248,36 @@ void Game::LoadGame() {
 }
 void Game::restart() {
     restartRequested = true;
-    landed = true;
+    gm = GameState::Play;
+}
+
+void Game::handleMenuEvent(const sf::Event& event) {
+    sf::FloatRect resumeButton({133.f, 439.f}, {334.f, 89.f});
+    sf::FloatRect exitButton({133.f, 560.f}, {334.f, 87.f});
+    if (const auto* mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
+        if (mouse->button != sf::Mouse::Button::Left) {
+            return;
+        }
+        auto position = render.getWindow().mapPixelToCoords(mouse->position);
+        if (resumeButton.contains(position)) {
+            inputTimer.restart();
+            gm = GameState::Play;
+        } else if (exitButton.contains(position)) {
+            SaveGame();
+            gm = GameState::Exit;
+        }
+    }
+}
+void Game::handleGameOverEvent(const sf::Event& event) {
+    sf::FloatRect restartButton({151.f, 530.f}, {298.f, 72.f});
+    if (const auto* mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
+        if (mouse->button != sf::Mouse::Button::Left) {
+            return;
+        }
+        auto position = render.getWindow().mapPixelToCoords(mouse->position);
+        if (restartButton.contains(position)) {
+            restartRequested = true;
+            gm = GameState::Play;
+        }
+    }
 }

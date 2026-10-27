@@ -16,7 +16,7 @@
 
 class Game {
     public:
-        Game()=default;
+        Game() = default;
         void start();
         void drawboard(const Tetromino& currenttetromino);
         void drawtetromino(Tetromino t);
@@ -40,6 +40,9 @@ class Game {
         void restart();
         GameState gm = GameState::Play;
         Renderer render = Renderer();
+        void handleMenuEvent(const sf::Event& event);
+        void handleGameOverEvent(const sf::Event& event);
+
     private:
         Tetromino current{TetrominoType::T};
         bool landed = false;

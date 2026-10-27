@@ -7,10 +7,10 @@ Renderer::Renderer(): window(sf::VideoMode({600, 800}), "Tetris by Polina Stupak
     throw std::runtime_error("Cannot load baner.png");
 }
 font.openFromFile("../PressStart2P-Regular.ttf");
-    if (!menuTexture.loadFromFile("../Tetris pause menu with updated controls.png")) {
+    if (!menuTexture.loadFromFile("../Polina’s Neon Tetris Pause Menu.png")) {
         throw std::runtime_error("Cannot load");
     }
-    if (!gameoverTexture.loadFromFile("../Neon pixel Tetris game over.png")) {
+    if (!gameoverTexture.loadFromFile("../Neon Tetris game over screen.png")) {
         throw std::runtime_error("Cannot load");
     }
 }
@@ -97,13 +97,13 @@ void Renderer::drawGameOver(int bestscore, int points) {
     sf::Sprite gameover(gameoverTexture);
     gameover.setScale({600.f / gameoverTexture.getSize().x, 800.f / gameoverTexture.getSize().y});
     sf::Text text(font);
-    text.setCharacterSize(20);
+    text.setCharacterSize(23);
     text.setString(
-        "SCORE: \n" + std::to_string(points) +
-        "\n\nBEST: \n" + std::to_string(bestscore)
+        "SCORE: " + std::to_string(points) +
+        "\n\nBEST: " + std::to_string(bestscore)
     );
     text.setFillColor(sf::Color(245, 235, 255));
-    text.setPosition({250.f, 560.f});
+    text.setPosition({200.f, 380.f});
     window.draw(gameover);
     window.draw(text);
     window.display();

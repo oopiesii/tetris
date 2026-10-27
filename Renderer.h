@@ -20,6 +20,7 @@ class Renderer {
         void drawCell(int row, int col, Color color);
         void Menu();
         void drawGameOver(int bestscore, int points );
+
     private:
         sf::RenderWindow window;
         sf::Texture bannerTexture;
