@@ -3,15 +3,18 @@
 //
 
 #include "Renderer.h"
-Renderer::Renderer(): window(sf::VideoMode({600, 800}), "Tetris by Polina Stupak"){window.setFramerateLimit(60);if (!bannerTexture.loadFromFile("../baner.png")) {
-    throw std::runtime_error("Cannot load baner.png");
-}
-font.openFromFile("../PressStart2P-Regular.ttf");
-    if (!menuTexture.loadFromFile("../Polina’s Neon Tetris Pause Menu.png")) {
-        throw std::runtime_error("Cannot load");
+Renderer::Renderer(): window(sf::VideoMode({600, 800}), "Tetris by Polina Stupak"){window.setFramerateLimit(60);
+    if (!bannerTexture.loadFromFile(ASSETS_DIR "banner.png")) {
+        throw std::runtime_error("Cannot load banner.png");
     }
-    if (!gameoverTexture.loadFromFile("../Neon Tetris game over screen.png")) {
-        throw std::runtime_error("Cannot load");
+    if (!menuTexture.loadFromFile(ASSETS_DIR "pause.png")) {
+        throw std::runtime_error("Cannot load pause.png");
+    }
+    if (!gameoverTexture.loadFromFile(ASSETS_DIR "gameover.png")) {
+        throw std::runtime_error("Cannot load gameover.png");
+    }
+    if (!font.openFromFile(ASSETS_DIR "PressStart2P-Regular.ttf")) {
+        throw std::runtime_error("Cannot load PressStart2P-Regular.ttf");
     }
 }
 

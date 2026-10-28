@@ -42,6 +42,10 @@ add_executable(assignment3 main.cpp
         Renderer.h
 )
 
+target_compile_definitions(assignment3 PRIVATE
+        ASSETS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets/"
+)
+
 list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew")
 
 find_package(SFML 3 REQUIRED COMPONENTS Graphics)
