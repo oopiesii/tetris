@@ -44,6 +44,10 @@ std::unique_ptr<Command> InputHandler::getAction() {
             inputTimer.restart();
             return std::make_unique<RestartCommand>();
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) {
+            inputTimer.restart();
+            return std::make_unique<HardDropCommand>();
+        }
         return nullptr;
     }
     if (inputTimer.getElapsedTime().asSeconds() < delay) {
