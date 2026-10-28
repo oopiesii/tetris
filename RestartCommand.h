@@ -6,14 +6,12 @@
 #define ASSIGNMENT3_RESTARTCOMMAND_H
 #include "Board.h"
 #include "Command.h"
-#include "Game.h"
 
 
 class RestartCommand : public Command {
 public:
     void execute(Game& g) override;
     Board b = Board();
-    Game g = Game();
 };
 
 
